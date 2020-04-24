@@ -1,0 +1,476 @@
+0) Datei readme lesen und beachten !!!!
+
+1) Datenbank Backup machen!
+
+2) Führen Sie die Befehle aus der Datei  'installation.sql'  aus
+
+3) Kopieren Sie neue Dateien aus dem Ordner 'new_files' in das Stammverzeichnis des Shops. Es dürfen keine Dateien überschrieben werden.
+
+4) Nehmen Sie folgende Änderungen an den vorhandenen Dateien vor :
+
+In admin/includes/functions/general.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+   /**
+   * ab_cfg_pull_down_product_info_templates()
+   *
+   * @return
+   */
+  function ab_cfg_pull_down_product_info_templates() {
+    $name = (isset($key) ? 'configuration['.$key.']' : 'configuration_value'); //DokuMan - set undefined $key
+    $templates_array[] = array ('id' => "default", 'text' => "default");
+    if ($dir = opendir(DIR_FS_CATALOG.'templates/'.CURRENT_TEMPLATE.'/module/product_info/')) {
+      while (($templates = readdir($dir)) !== false) {
+        if (($templates != "CVS") and ($templates != ".") and ($templates != "..")) {
+          $templates_array[] = array ('id' => $templates, 'text' => $templates);
+        }
+      }
+      closedir($dir);
+      return xtc_draw_pull_down_menu($name, $templates_array, AFTERBUY_DEFAULT_IMPORT_PRODUCTS_TEMPLATE);
+    }
+  }
+   /**
+   * ab_cfg_pull_down_product_listing_templates()
+   *
+   * @return
+   */
+  function ab_cfg_pull_down_product_listing_templates() {
+    $name = (isset($key) ? 'configuration['.$key.']' : 'configuration_value'); //DokuMan - set undefined $key
+    $templates_array[] = array ('id' => "default", 'text' => "default");
+    if ($dir = opendir(DIR_FS_CATALOG.'templates/'.CURRENT_TEMPLATE.'/module/product_listing/')) {
+      while (($templates = readdir($dir)) !== false) {
+        if (($templates != "CVS") and ($templates != ".") and ($templates != "..")) {
+          $templates_array[] = array ('id' => $templates, 'text' => $templates);
+        }
+      }
+      closedir($dir);
+      return xtc_draw_pull_down_menu($name, $templates_array, AFTERBUY_DEFAULT_IMPORT_PRODUCTS_LISTING_TEMPLATE);
+    }
+  }
+  
+   /**
+   * ab_cfg_pull_down_product_options_templates()
+   *
+   * @return
+   */
+  function ab_cfg_pull_down_product_options_templates() {
+    $name = (isset($key) ? 'configuration['.$key.']' : 'configuration_value'); //DokuMan - set undefined $key
+    $templates_array[] = array ('id' => "default", 'text' => "default");
+    if ($dir = opendir(DIR_FS_CATALOG.'templates/'.CURRENT_TEMPLATE.'/module/product_options/')) {
+      while (($templates = readdir($dir)) !== false) {
+        if (($templates != "CVS") and ($templates != ".") and ($templates != "..")) {
+          $templates_array[] = array ('id' => $templates, 'text' => $templates);
+        }
+      }
+      closedir($dir);
+      return xtc_draw_pull_down_menu($name, $templates_array, AFTERBUY_DEFAULT_IMPORT_PRODUCTS_OPTIONS_TEMPLATE);
+    }
+  }
+  
+   /**
+   * ab_cfg_pull_down_categorie_listing_templates()
+   *
+   * @return
+   */
+  function ab_cfg_pull_down_categorie_listing_templates() {
+    $name = (isset($key) ? 'configuration['.$key.']' : 'configuration_value'); //DokuMan - set undefined $key
+    $templates_array[] = array ('id' => "default", 'text' => "default");
+    if ($dir = opendir(DIR_FS_CATALOG.'templates/'.CURRENT_TEMPLATE.'/module/categorie_listing/')) {
+      while (($templates = readdir($dir)) !== false) {
+        if (($templates != "CVS") and ($templates != ".") and ($templates != "..")) {
+          $templates_array[] = array ('id' => $templates, 'text' => $templates);
+        }
+      }
+      closedir($dir);
+      return xtc_draw_pull_down_menu($name, $templates_array, AFTERBUY_DEFAULT_IMPORT_CATEGORIES_TEMPLATE);
+    }
+  }
+  
+  /**
+   * ab_cfg_pull_down_free_fields()
+   * 
+   * @param mixed $free_field_no_value
+   * @return 
+   */
+  
+  function ab_cfg_pull_down_free_fields($free_field_no_value) {
+    $name = (isset($key) ? 'configuration['.$key.']' : 'configuration_value'); //DokuMan - set undefined $key
+    $free_field_options[] = array ('id' => "none", 'text' => TEXT_NONE);
+    $free_field_options[] = array ('id' => "meta_description", 'text' => META_DESCRIPTION_TITLE);
+    $free_field_options[] = array ('id' => "meta_title", 'text' => META_TITLE_TITLE);
+    $free_field_options[] = array ('id' => "order_description", 'text' => ORDER_DESCRIPTION_TITLE);
+
+    return xtc_draw_pull_down_menu($name, $free_field_options, $free_field_no_value);
+  }
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In admin/includes/classes/categories.php
+
+Finden Sie:
+
+			    'categories_template' => xtc_db_prepare_input($categories_data['categories_template']),
+                            'listing_template' => xtc_db_prepare_input($categories_data['listing_template'])
+
+Ersetzen Sie mit:
+
+			    'categories_template' => xtc_db_prepare_input($categories_data['categories_template']),
+                            'listing_template' => xtc_db_prepare_input($categories_data['listing_template']),
+                            'afterbuy_cid' => xtc_db_prepare_input($categories_data['afterbuy_cid'])
+
+
+Finden Sie:
+
+			     'products_vpe' => xtc_db_prepare_input($products_data['products_vpe']),
+                             'wholesaler_id' => xtc_db_prepare_input($products_data['wholesaler_id']),
+                             'wholesaler_reorder' => xtc_db_prepare_input($products_data['wholesaler_reorder'])
+
+Ersetzen Sie mit:
+
+
+			     'products_vpe' => xtc_db_prepare_input($products_data['products_vpe']),
+                             'wholesaler_id' => xtc_db_prepare_input($products_data['wholesaler_id']),
+                             'wholesaler_reorder' => xtc_db_prepare_input($products_data['wholesaler_reorder']),
+                             'ab_productsid' => xtc_db_prepare_input($products_data['ab_productsid'])
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In admin/includes/modules/new_category.php
+
+Finden Sie:
+
+	<div class='col-xs-12'>
+          <div class="col-xs-2 main"><span class="main"><?php echo TEXT_CHOOSE_INFO_TEMPLATE_CATEGORIE; ?>:</span></div>
+          <div class="col-xs-10 main"><span class="main"><?php echo $catfunc->create_templates_dropdown_menu('categories_template','/module/categorie_listing/',$cInfo->categories_template, 'style="width: 200px"');?></span></div>
+        </div>
+
+
+Fügen Sie danach an:
+
+	<div class='col-xs-12'>
+          <div class="col-xs-2 main"><span class="main"><?php echo TEXT_EDIT_AFTERBUY_CID; ?>:</span></div>
+          <div class="col-xs-10 main"><span class="main"><?php echo xtc_draw_input_field('afterbuy_cid', $cInfo->afterbuy_cid, 'style="width: 130px" disabled="disabled"'); ?><?php echo xtc_draw_hidden_field('afterbuy_cid', $cInfo->afterbuy_cid); ?></span></div>
+        </div>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In admin/includes/modules/new_product.php
+
+Finden Sie:
+
+	<?php if (ACTIVATE_SHIPPING_STATUS=='true') { ?>
+            <div class='col-xs-12'>
+              <div class="col-xs-12 col-sm-6 main"><span class="main"><?php echo BOX_SHIPPING_STATUS.':'; ?></span></div>
+              <div class="col-xs-12 col-sm-6 main"><span class="main"><?php echo xtc_draw_pull_down_menu('shipping_status', $shipping_statuses, $pInfo->products_shippingtime=='' ? (int)(DEFAULT_SHIPPING_STATUS_ID) : $pInfo->products_shippingtime, 'style="width: 135px"'); ?></span></div>
+            </div>
+            <?php } ?>
+
+Fügen Sie danach an:
+
+	<div class='col-xs-12'>
+              <div class="col-xs-12 col-sm-6 main"><span class="main"><?php echo TEXT_PRODUCTS_AFTERBUY_PID; ?></span></div>
+              <div class="col-xs-12 col-sm-6 main"><span class="main"><?php echo xtc_draw_input_field('ab_productsid', $pInfo->ab_productsid, 'style="width: 135px" disabled="disabled"'); ?>&nbsp;<?php echo xtc_draw_hidden_field('ab_productsid', $pInfo->ab_productsid); ?></span></div>
+            </div>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In admin/includes/column_left.php
+
+Finden Sie:
+
+	$menu_items['content'][] = array(		"name" 		=> BOX_IMPORT,
+							"is_main"	=> false,
+							"link" 		=> xtc_href_link('csv_backend.php', '', 'NONSSL'),
+							"access"	=> "csv_backend",
+							"check"		=> true);
+
+Fügen Sie danach an:
+
+	$menu_items['content'][] = array(		"name" 		=> BOX_AFTERBUY_IMPORT,
+							"is_main"	=> false,
+							"link" 		=> xtc_href_link('afterbuy_import.php', '', 'NONSSL'),
+							"access"	=> "afterbuy_import",
+							"check"		=> true);
+
+
+Finden Sie:
+
+	$menu_items['configuration'][] = array(		"name" 		=> BOX_SHIPPING_STATUS,
+							"is_main"	=> true,
+							"link" 		=> xtc_href_link(FILENAME_SHIPPING_STATUS, '', 'NONSSL'),
+							"access"	=> "shipping_status",
+							"check"		=> ACTIVATE_SHIPPING_STATUS);
+
+Fügen Sie danach an:
+
+	$menu_items['configuration'][] = array(		"name" 		=> BOX_CONFIGURATION_50,
+							"is_main"	=> true,
+							"link" 		=> xtc_href_link(FILENAME_CONFIGURATION, 'gID=50', 'NONSSL'),
+							"access"	=> "configuration",
+							"check"		=> true);
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In admin/includes/filenames.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	define('FILENAME_AFTERBUY_IMPORT', 'afterbuy_import.php');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In includes/application_top.php
+
+Finden Sie:
+
+	require_once (DIR_FS_INC.'xtc_js_lang.php');
+	require_once (DIR_FS_INC.'html_encoding.php'); //new function for PHP5.4
+
+Fügen Sie danach an:
+
+	require_once (DIR_FS_INC.'xtc_get_customers_statuses.inc.php');
+	require_once (DIR_FS_INC.'get_active_language_ids.inc.php');
+
+Finden Sie:
+
+	// start the session
+	$session_started = false;
+	if (SESSION_FORCE_COOKIE_USE == 'True') {
+
+Ersetzen Sie mit:
+
+	// start the session
+	$session_started = false;
+	if (SESSION_FORCE_COOKIE_USE == 'True' && strpos($PHP_SELF, FILENAME_AFTERBUY_IMPORT) === false) {
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In includes/filenames.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	define('FILENAME_AFTERBUY_IMPORT', 'afterbuy_import.php');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/english/admin/categories.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	define("TEXT_EDIT_AFTERBUY_CID", "Category's Afterbuy ID");
+	define("TEXT_PRODUCTS_AFTERBUY_PID", "Product's Afterbuy ID");
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/german/admin/categories.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	define("TEXT_EDIT_AFTERBUY_CID", "Category's Afterbuy ID");
+	define("TEXT_PRODUCTS_AFTERBUY_PID", "Product's Afterbuy ID");
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/english/admin/configuration.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	// Afterbuy
+	define('AFTERBUY_IMPORT_STATUS_TITLE', 'Afterbuy Status');
+	define('AFTERBUY_IMPORT_STATUS_DESC', '');
+	define('AFTERBUY_USERNAME_TITLE', 'Afterbuy Username');
+	define('AFTERBUY_USERNAME_DESC', '');
+	define('AFTERBUY_PASSWORD_TITLE', 'Afterbuy Password');
+	define('AFTERBUY_PASSWORD_DESC', '');
+	define('AFTERBUY_PARTNER_ID_TITLE', 'Afterbuy Partner ID');
+	define('AFTERBUY_PARTNER_ID_DESC', '');
+	define('AFTERBUY_PARTNER_PASSWORD_TITLE', 'Afterbuy Partner Password');
+	define('AFTERBUY_PARTNER_PASSWORD_DESC', '');
+	define('AFTERBUY_IMPORT_RUNNING_TITLE', 'Afterbuy Import running status');
+	define('AFTERBUY_IMPORT_RUNNING_DESC', 'Afterbuy Import status which indicates if the import is currently running');
+	define('AFTERBUY_IMPORT_INACTIVE_STATUS_TITLE', 'Import inactive items?');
+	define('AFTERBUY_IMPORT_INACTIVE_STATUS_DESC', '');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_TEMPLATE_TITLE', 'Product info template');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_TEMPLATE_DESC', 'Product info template for imported products');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_LISTING_TEMPLATE_TITLE', 'Product listing template');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_LISTING_TEMPLATE_DESC', 'Product listing template for imported products');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_OPTIONS_TEMPLATE_TITLE', 'Product options template');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_OPTIONS_TEMPLATE_DESC', 'Product options template for imported products');
+	define('AFTERBUY_DEFAULT_IMPORT_CATEGORIES_TEMPLATE_TITLE', 'Categories template');
+	define('AFTERBUY_DEFAULT_IMPORT_CATEGORIES_TEMPLATE_DESC', 'Categories template for imported categories');
+	for ($i=0;$i<=10;$i++) {
+	    define('AFTERBUY_FREE_FIELD_'.$i.'_TITLE', 'Afterbuy free field '.$i);
+	    define('AFTERBUY_FREE_FIELD_'.$i.'_DESC', 'Value for Afterbuy free field '.$i);
+	}
+	define('AFTERBUY_ORDER_STATUS_UPDATE_INTERVAL_TITLE', 'Order status update interval');
+	define('AFTERBUY_ORDER_STATUS_UPDATE_INTERVAL_DESC', 'Number of days in the past for which the order status update will search orders for');
+	define('AFTERBUY_OVERWRITE_EXISTING_IMAGE_TITLE', 'Overwrite existing images?');
+	define('AFTERBUY_OVERWRITE_EXISTING_IMAGE_DESC', 'Are existing images overwritten while products are updated?');
+	define('AFTERBUY_PAID_ORDER_STATUS_TITLE', 'Order status for paid orders');
+	define('AFTERBUY_PAID_ORDER_STATUS_DESC', '');
+	define('AFTERBUY_SHIPPED_ORDER_STATUS_TITLE', 'Order status for shipped orders');
+	define('AFTERBUY_SHIPPED_ORDER_STATUS_DESC', '');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_TO_TITLE', 'Endfilterstufe f&uuml;r Kategorien');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_TO_DESC', '');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_FROM_TITLE', 'Start filter level for categories');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_FROM_DESC', '');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_TO_TITLE', 'Filterstufe f&uuml;r Kategorien starten');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_TO_DESC', '');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_FROM_TITLE', 'Filterstufe f&uuml;r Produkte starten');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_FROM_DESC', '');
+	define('AFTERBUY_PRODUCT_ID_START_TITLE', 'Import aus dieser Produkt-ID starten');
+	define('AFTERBUY_PRODUCT_ID_START_DESC', '');
+	define('AFTERBUY_PRODUCT_ID_END_TITLE', 'Import aus dieser Produkt-ID beenden (0 - kein Limit)');
+	define('AFTERBUY_PRODUCT_ID_END_DESC', '');
+	define('AFTERBUY_ADDITIONAL_IMAGES_LOCATION_TITLE', 'Location of data where additional images are stored');
+	define('AFTERBUY_ADDITIONAL_IMAGES_LOCATION_DESC', '"memo" - Memo field of Afterbuy <br /><br />"images" - ProductsImages field of Afterbuy');
+	define('AFTERBUY_IMPORT_PRODUCTS_STATUS_TITLE', 'Status of imported products');
+	define('AFTERBUY_IMPORT_PRODUCTS_STATUS_DESC', '');
+	define('AFTERBUY_IMPORT_DESCRIPTION_HEADER_TITLE', 'Import header template?');
+	define('AFTERBUY_IMPORT_DESCRIPTION_HEADER_DESC', '');
+	define('AFTERBUY_IMPORT_DESCRIPTION_FOOTER_TITLE', 'Import footer template?');
+	define('AFTERBUY_IMPORT_DESCRIPTION_FOOTER_DESC', '');
+	define('AFTERBUY_IMPORT_RESELLER_GROUPS_TITLE', 'Reseller groups IDs');
+	define('AFTERBUY_IMPORT_RESELLER_GROUPS_DESC', 'Divide IDs with comma');
+	define('AFTERBUY_LAST_IMPORT_RUNTIME_TITLE', 'Date and time of last import run');
+	define('AFTERBUY_LAST_IMPORT_RUNTIME_DESC', '');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/german/admin/configuration.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	// Afterbuy
+	define('AFTERBUY_IMPORT_STATUS_TITLE', 'Afterbuy Status');
+	define('AFTERBUY_IMPORT_STATUS_DESC', '');
+	define('AFTERBUY_USERNAME_TITLE', 'Afterbuy Username');
+	define('AFTERBUY_USERNAME_DESC', '');
+	define('AFTERBUY_PASSWORD_TITLE', 'Afterbuy Password');
+	define('AFTERBUY_PASSWORD_DESC', '');
+	define('AFTERBUY_PARTNER_ID_TITLE', 'Afterbuy Partner ID');
+	define('AFTERBUY_PARTNER_ID_DESC', '');
+	define('AFTERBUY_PARTNER_PASSWORD_TITLE', 'Afterbuy Partner Password');
+	define('AFTERBUY_PARTNER_PASSWORD_DESC', '');
+	define('AFTERBUY_IMPORT_RUNNING_TITLE', 'Afterbuy Import running status');
+	define('AFTERBUY_IMPORT_RUNNING_DESC', 'Afterbuy Import status which indicates if the import is currently running');
+	define('AFTERBUY_IMPORT_INACTIVE_STATUS_TITLE', 'Import inactive items?');
+	define('AFTERBUY_IMPORT_INACTIVE_STATUS_DESC', '');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_TEMPLATE_TITLE', 'Product info template');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_TEMPLATE_DESC', 'Product info template for imported products');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_LISTING_TEMPLATE_TITLE', 'Product listing template');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_LISTING_TEMPLATE_DESC', 'Product listing template for imported products');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_OPTIONS_TEMPLATE_TITLE', 'Product options template');
+	define('AFTERBUY_DEFAULT_IMPORT_PRODUCTS_OPTIONS_TEMPLATE_DESC', 'Product options template for imported products');
+	define('AFTERBUY_DEFAULT_IMPORT_CATEGORIES_TEMPLATE_TITLE', 'Categories template');
+	define('AFTERBUY_DEFAULT_IMPORT_CATEGORIES_TEMPLATE_DESC', 'Categories template for imported categories');
+	for ($i=0;$i<=10;$i++) {
+	    define('AFTERBUY_FREE_FIELD_'.$i.'_TITLE', 'Afterbuy free field '.$i);
+	    define('AFTERBUY_FREE_FIELD_'.$i.'_DESC', 'Value for Afterbuy free field '.$i);
+	}
+	define('AFTERBUY_ORDER_STATUS_UPDATE_INTERVAL_TITLE', 'Order status update interval');
+	define('AFTERBUY_ORDER_STATUS_UPDATE_INTERVAL_DESC', 'Number of days in the past for which the order status update will search orders for');
+	define('AFTERBUY_OVERWRITE_EXISTING_IMAGE_TITLE', 'Overwrite existing images?');
+	define('AFTERBUY_OVERWRITE_EXISTING_IMAGE_DESC', 'Are existing images overwritten while products are updated?');
+	define('AFTERBUY_PAID_ORDER_STATUS_TITLE', 'Order status for paid orders');
+	define('AFTERBUY_PAID_ORDER_STATUS_DESC', '');
+	define('AFTERBUY_SHIPPED_ORDER_STATUS_TITLE', 'Order status for shipped orders');
+	define('AFTERBUY_SHIPPED_ORDER_STATUS_DESC', '');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_TO_TITLE', 'End filter level for categories');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_TO_DESC', '');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_FROM_TITLE', 'Start filter level for categories');
+	define('AFTERBUY_CATEGORY_FILTER_LEVEL_FROM_DESC', '');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_TO_TITLE', 'End filter level for products');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_TO_DESC', '');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_FROM_TITLE', 'Start filter level for products');
+	define('AFTERBUY_PRODUCT_FILTER_LEVEL_FROM_DESC', '');
+	define('AFTERBUY_PRODUCT_ID_START_TITLE', 'Start import from this product ID');
+	define('AFTERBUY_PRODUCT_ID_START_DESC', '');
+	define('AFTERBUY_PRODUCT_ID_END_TITLE', 'End import from this product ID (0 - no limit)');
+	define('AFTERBUY_PRODUCT_ID_END_DESC', '');
+	define('AFTERBUY_ADDITIONAL_IMAGES_LOCATION_TITLE', 'Location of data where additional images are stored');
+	define('AFTERBUY_ADDITIONAL_IMAGES_LOCATION_DESC', '"memo" - Memo field of Afterbuy <br /><br />"images" - ProductsImages field of Afterbuy');
+	define('AFTERBUY_IMPORT_PRODUCTS_STATUS_TITLE', 'Status of imported products');
+	define('AFTERBUY_IMPORT_PRODUCTS_STATUS_DESC', '');
+	define('AFTERBUY_IMPORT_DESCRIPTION_HEADER_TITLE', 'Import header template?');
+	define('AFTERBUY_IMPORT_DESCRIPTION_HEADER_DESC', '');
+	define('AFTERBUY_IMPORT_DESCRIPTION_FOOTER_TITLE', 'Import footer template?');
+	define('AFTERBUY_IMPORT_DESCRIPTION_FOOTER_DESC', '');
+	define('AFTERBUY_IMPORT_RESELLER_GROUPS_TITLE', 'Reseller groups IDs');
+	define('AFTERBUY_IMPORT_RESELLER_GROUPS_DESC', 'Divide IDs with comma');
+	define('AFTERBUY_LAST_IMPORT_RUNTIME_TITLE', 'Datum und Uhrzeit des letzten Importlaufs');
+	define('AFTERBUY_LAST_IMPORT_RUNTIME_DESC', '');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/english/admin/english.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	define('BOX_AFTERBUY_IMPORT', 'Afterbuy Import');
+	define('BOX_CONFIGURATION_50', 'Afterbuy Import Configuration');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/german/admin/german.php
+
+Am Ende, vor dem schließenden "?>" Tag, fügen Sie hinzu:
+
+	define('BOX_AFTERBUY_IMPORT', 'Afterbuy Import');
+	define('BOX_CONFIGURATION_50', 'Afterbuy Import Configuration');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/english/admin/start.php
+
+Fügen Sie for dem ?> ein
+
+	define('TABLE_CAPTION_AFTERBUY_LAST_IMPORT_RUNTIME', 'Afterbuy last import runtime');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In lang/german/admin/start.php
+
+Fügen Sie for dem ?> ein
+
+	define('TABLE_CAPTION_AFTERBUY_LAST_IMPORT_RUNTIME', 'Afterbuy letzte Import-Laufzeit');
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In includes/classes/afterbuy.php
+
+Finden Sie:
+
+	$verwende_shop_artikelnummer = 0;
+
+Und ändern Sie es zu:
+
+	$verwende_shop_artikelnummer = 2;
+
+Finden Sie:
+
+	$this->afterbuyString .= "AlternArtikelNr1_".$nr."=".$alter_artnr."&";
+	$this->afterbuyString .= "ArtikelStammID_" . $nr . "=" . $afterbuy_products_id . "&";
+
+Und ändern Sie es zu:
+
+	//$this->afterbuyString .= "AlternArtikelNr1_".$nr."=".$alter_artnr."&";
+	$this->afterbuyString .= "AlternArtikelNr1_".$nr."=".$artnr."&";
+	//$this->afterbuyString .= "ArtikelStammID_" . $nr . "=" . $afterbuy_products_id . "&";
+	$this->afterbuyString .= "ArtikelStammID_" . $nr . "=" . $artnr . "&";
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Danach, besuchen Sie bitte MEINSHOP/AfterbuyInstaller/ wo Sie Ihre vorhandenen Produkte und Kategorien ihren dazugehörigen Afterbuy-IDs zuordnen können.
+
+Nach der Zuordnung sollten Sie das AfterbuyInstaller-Verzeichnis aus Sicherheitsgründen löschen!!!
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Führen Sie für Cronjob-Aufrufe folgende Befehle aus:
+
+Für Kategorie- und Produktimport - YOURSHOPURL/afterbuy_import.php?action=GetShopCatalogs
+
+Für order status update - YOURSHOPURL/afterbuy_import.php?action=GetSoldItems
