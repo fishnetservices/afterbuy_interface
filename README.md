@@ -6,7 +6,7 @@ Technische Vorraussetzungen:
 
 Server mit einem memory_limit von mindestens 192 MB.
 Wir empfehlen einen eigenen Server (kein Shared Hosting)
-PHP 7.x
+PHP 7.1 / 7.2
 Je 1000 Produkte sollten Sie 5 Cronjobs rechnen. 3 für den Produktimport, 1 für den Abgleich der Bestellungen und 1 für den Bilderimport. Entsprechend viele Cronjobs muss Ihr Hoster erlauben.
 
 Aktuelle (Version 1.5) Funktionen:
@@ -37,7 +37,7 @@ Technical requirements:
 
 Server with a memory_limit of at least 192 MB.
 We recommend your own server (no shared hosting)
-PHP 7.x
+PHP 7.1 / 7.2
 You should calculate 5 cronjobs per 1000 products. 3 for product import, 1 for order matching and 1 for image import. Your hoster must allow a corresponding number of cronjobs.
 
 Current (Version 1.5) functions:
